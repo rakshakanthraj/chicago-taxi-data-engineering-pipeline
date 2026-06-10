@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: fact_trips
+    description: "The central fact table reconciled to 1,000 trips with $51,122.35 revenue."
+    columns:
+      - name: trip_id
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_sk
+
+      - name: driver_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_driver')
+                field: driver_sk
+
+      - name: location_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_locations')
+                field: location_sk
+
+      - name: payment_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_payments')
+                field: payment_sk
+
+      - name: trip_date_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_sk
