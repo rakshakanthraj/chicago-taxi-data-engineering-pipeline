@@ -1,0 +1,45 @@
+snapshots:
+  - name: DimCustomers
+    relation: source('source_silver', 'customers')
+    config:
+      schema: gold
+      database: workspace
+      unique_key: customer_id
+      strategy: timestamp
+      updated_at: last_updated_timestamp
+
+  - name: DimLocations
+    relation: source('source_silver', 'locations')
+    config:
+      schema: gold
+      database: workspace
+      unique_key: location_id
+      strategy: timestamp
+      updated_at: last_updated_timestamp
+
+  - name: DimDrivers
+    relation: source('source_silver', 'drivers')
+    config:
+      schema: gold
+      database: workspace
+      unique_key: driver_id
+      strategy: timestamp
+      updated_at: last_updated_timestamp
+
+  - name: DimPayments
+    relation: source('source_silver', 'payments')
+    config:
+      schema: gold
+      database: workspace
+      unique_key: payment_id
+      strategy: timestamp
+      updated_at: last_updated_timestamp
+    
+  - name: DimVehicles
+    relation: source('source_silver', 'vehicles')
+    config:
+      schema: gold
+      database: workspace
+      unique_key: vehicle_id
+      strategy: timestamp
+      updated_at: last_updated_timestamp
