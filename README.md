@@ -1,130 +1,262 @@
 # Chicago Taxi Data Engineering Pipeline
 
-## 📌 Project Overview
-An end-to-end data engineering pipeline built using **Databricks, PySpark, Delta Lake, and dbt** to transform raw Chicago taxi trip data into an **analytics-ready data warehouse**.
+## Overview
 
-This project implements a **Medallion Architecture (Bronze, Silver, Gold layers)** and includes **Slowly Changing Dimension Type 2 (SCD Type 2)** for historical tracking along with data modeling for analytics and financial reconciliation use cases.
-
----
-
-## 📌 Problem Statement
-Raw Chicago taxi trip data was not analytics-ready due to multiple data quality and modeling issues, including:
-- Duplicate records generated during joins
-- Inconsistent schema across datasets
-- Presence of null and missing values
-- Lack of historical tracking for dimension changes
-- No validation across transformation layers
-
-This pipeline addresses these challenges by building a structured and reliable Lakehouse architecture, ensuring clean, consistent, and analytics-ready data.
+This project demonstrates an end-to-end data engineering pipeline built using **Databricks, PySpark, Delta Lake, and dbt**. It ingests raw Chicago taxi trip data, cleans and transforms it, implements **Slowly Changing Dimension (SCD Type 2)** for historical tracking, and builds an analytics-ready star schema.
 
 ---
 
-## 📌 Architecture & Data Flow
+## Project Objective
 
-### Ingestion Layer (Bronze)
-Raw CSV datasets are ingested into Delta tables using **Databricks Auto Loader**, ensuring efficient incremental ingestion and full data lineage tracking.
-
-### Processing Layer (Silver)
-Data is processed using **PySpark**, where cleaning, schema enforcement, and transformations are performed. Row-level deduplication is handled using **window functions (row_number)**.
-
-### Modeling Layer (Gold)
-A **star schema** is built using **dbt**, transforming the cleaned data into analytics-ready models. This layer includes **SCD Type 2 logic** and **point-in-time joins** for historical tracking and analytics.
+Build a production-style data engineering pipeline that processes Chicago taxi trip data using the Medallion Architecture while preserving historical dimension changes and producing validated datasets for analytics.
 
 ---
 
-## 📌 Project Structure
+## Architecture
 
 ```text
-├── models/
-│   ├── staging/
-│   ├── intermediate/
-│   └── marts/
-├── snapshots/       # SCD Type 2 historical tracking
-├── macros/          # Reusable dbt logic functions
-├── assets/          # Lineage graphs and output screenshots
-└── dbt_project.yml  # Main configuration file
+                Raw CSV Files
+                      │
+                      ▼
+             Bronze Layer
+        Databricks Auto Loader
+                      │
+                      ▼
+             Silver Layer
+      Data Cleaning & Validation
+           Deduplication
+                      │
+                      ▼
+              Gold Layer
+       dbt Star Schema Models
+      SCD Type 2 Snapshots
+        Point-in-Time Joins
+                      │
+                      ▼
+       Analytics Ready Lakehouse
 ```
 
 ---
 
-## 📌 Notes
-- Data quality validation was performed using custom SQL audit scripts in Databricks.
-- Raw Bronze layer data and Delta tables are stored in Databricks and are not included in this repository.
+## Technology Stack
+
+* Databricks
+* PySpark
+* Delta Lake
+* dbt
+* SQL
+* Git
 
 ---
 
-## 📌 Key Engineering Achievements
+## Skills Demonstrated
 
-### 🧩 Data Deduplication & Grain Fix
-- **Root cause:** Identified a mismatch in join grain across fact and dimension datasets leading to row inflation.
-- **Solution:** Implemented `row_number()` window function to enforce uniqueness at the correct business grain.
-- **Result:** Accurate trip-level dataset with consistent row counts across all pipeline layers.
-
-### 💰 Data Reconciliation & Financial Consistency
-- **Validation:** Built SQL audit checks in Databricks to compare aggregated metrics across Silver and Gold layers.
-- **Result:** Final validation confirmed accurate revenue total of **$51,122.35**, proving pipeline correctness and zero data loss.
-
-### ⚠️ Unknown Join Skew Resolution (Revenue Attribution Fix)
-- **Problem:** Resolved an issue where ~$41K revenue was incorrectly attributed to "Unknown" categories.
-- **Root Cause:** Late-arriving dimension data and missing historical snapshots.
-- **Solution:** Implemented **beginning-of-time fallback strategy** (1900-01-01) to ensure every trip had a valid dimension record for joins.
-- **Result:** Achieved 100% revenue attribution accuracy.
-
-### ⏱ Point-in-Time Join Modeling
-- **Problem:** Standard joins failed to reflect the historical state of drivers/vehicles at the time of transaction.
-- **Solution:** Implemented **point-in-time join logic** using dbt + SCD Type 2 snapshots.
-- **Result:** Each trip links to the exact dimension version active at the time of the event, ensuring a single source of truth.
+* ETL Pipeline Development
+* Medallion Architecture
+* PySpark Data Processing
+* Delta Lake
+* Data Cleaning & Validation
+* Window Functions
+* Slowly Changing Dimension (SCD Type 2)
+* Point-in-Time Joins
+* Star Schema Modeling
+* Data Reconciliation
 
 ---
 
-## 📌 Data Model (Star Schema)
+## Repository Structure
 
-**Fact Table:**
-- `fact_trips`
+```text
+models/
+├── staging/
+├── intermediate/
+└── marts/
 
-**Dimension Tables:**
-- `dim_drivers`
-- `dim_vehicles`
-- `dim_customers`
-- `dim_locations`
-- `dim_payments`
-
----
-
-## 📊 Validation & Reconciliation
-
-### 🔍 Summary
-- **Fact Table Grain:** 1 row = 1 trip
-- **Total Records Validated:** 1,000
-- **Revenue Consistency Confirmed:** $51,122.35
-
-### ✅ Layer-wise Audit
-
-| Layer | Total Records | Total Revenue | Status |
-| :--- | :--- | :--- | :--- |
-| Silver (Source) | 1,000 | $51,122.35 | ✅ PASS |
-| Gold (Target) | 1,000 | $51,122.35 | ✅ PASS |
+snapshots/
+macros/
+assets/
+dbt_project.yml
+README.md
+```
 
 ---
 
-## 📌 How to Run
+## ETL Workflow
 
-1. **Bronze Layer:** Run the Bronze ingestion notebook in Databricks to load raw data.
-2. **Silver Layer:** Run the Silver transformation notebook for cleaning and deduplication.
-3. **Snapshot Layer:** Capture historical changes:
-   ```bash
-   dbt snapshot
-   ```
-4. **Gold Layer:** Build the Star Schema:
-   ```bash
-   dbt run
-   ```
-5. **Validation:** Run reconciliation queries in Databricks to verify revenue consistency.
+1. Ingest raw taxi trip data into the Bronze layer.
+2. Clean and validate data in the Silver layer.
+3. Remove duplicate records using window functions.
+4. Build dimension and fact tables.
+5. Implement SCD Type 2 snapshots.
+6. Perform Point-in-Time joins.
+7. Generate analytics-ready Gold models.
 
 ---
 
-## 📌 Future Enhancements
-- Integrate **Databricks Workflows** for end-to-end orchestration.
-- Implement **CI/CD** using GitHub Actions to automate dbt testing.
-- Migrate manual validation queries to an automated **dbt testing framework**.
-- Build a **Power BI/Tableau** dashboard on top of the Gold layer.
+## Key Features
+
+* Automated ingestion using Databricks Auto Loader
+* Data cleaning and validation
+* Duplicate record handling
+* Historical tracking using SCD Type 2
+* Point-in-Time joins
+* Star schema modeling
+* Revenue reconciliation across layers
+
+---
+
+## Engineering Highlights
+
+### Data Deduplication
+
+**Problem**
+
+Joining multiple datasets introduced duplicate trip records.
+
+**Solution**
+
+Used **ROW_NUMBER()** window functions to retain the correct business grain.
+
+**Outcome**
+
+* Fact table grain: **One row represents one trip**
+* Consistent record counts across all layers
+
+---
+
+### Revenue Reconciliation
+
+Built SQL validation queries to compare Silver and Gold layers.
+
+**Validation Result**
+
+* Total Trips: **1,000**
+* Revenue: **$51,122.35**
+* Zero data loss during transformation
+
+---
+
+### Unknown Revenue Attribution Fix
+
+**Problem**
+
+Approximately **$41K** revenue was incorrectly attributed to **Unknown Vehicle Type**.
+
+**Root Cause**
+
+Late-arriving dimension records caused trips to miss valid dimension mappings.
+
+**Solution**
+
+Implemented a **Beginning-of-Time (1900-01-01)** fallback strategy to ensure every trip matched the correct historical dimension record.
+
+**Outcome**
+
+* Eliminated incorrect Unknown mappings
+* Achieved accurate revenue attribution
+
+---
+
+### Point-in-Time Historical Joins
+
+Implemented historical joins using dbt snapshots.
+
+```sql
+trip_timestamp
+BETWEEN valid_from
+AND valid_to
+```
+
+This ensures every trip is linked to the correct historical version of the dimension.
+
+---
+
+## Data Model
+
+### Fact Table
+
+* fact_trips
+
+### Dimension Tables
+
+* dim_drivers
+* dim_customers
+* dim_locations
+* dim_payments
+* dim_vehicles
+
+---
+
+## Validation
+
+| Layer  | Trips |    Revenue | Status |
+| ------ | ----: | ---------: | ------ |
+| Silver | 1,000 | $51,122.35 | PASS   |
+| Gold   | 1,000 | $51,122.35 | PASS   |
+
+---
+
+## Prerequisites
+
+* Python 3.8+
+* Apache Spark 3.x
+* Databricks
+* dbt
+* Git
+
+---
+
+## Running the Project
+
+Clone the repository:
+
+```bash
+git clone https://github.com/rakshakanthraj/chicago-taxi-data-pipeline.git
+cd chicago-taxi-data-pipeline
+```
+
+Run snapshots:
+
+```bash
+dbt snapshot
+```
+
+Build Gold models:
+
+```bash
+dbt run
+```
+
+---
+
+## What I Learned
+
+Through this project I gained hands-on experience in:
+
+* Designing Medallion Architecture pipelines
+* Building ETL pipelines using PySpark
+* Delta Lake processing
+* Implementing SCD Type 2
+* Point-in-Time joins
+* Star schema modeling
+* Revenue reconciliation
+* Data quality validation
+* dbt model development
+
+---
+
+## Future Improvements
+
+* Orchestrate the pipeline using Databricks Workflows
+* Add dbt tests
+* Implement CI/CD using GitHub Actions
+* Build Power BI dashboards
+* Optimize incremental processing
+
+---
+
+## Author
+
+**Raksha GK**
+
+GitHub: https://github.com/rakshakanthraj
