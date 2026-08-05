@@ -211,8 +211,8 @@ This ensures every trip is linked to the correct historical version of the dimen
 Clone the repository:
 
 ```bash
-git clone https://github.com/rakshakanthraj/chicago-taxi-data-pipeline.git
-cd chicago-taxi-data-pipeline
+git clone https://github.com/rakshakanthraj/chicago-taxi-data-engineering-pipeline.git
+cd chicago-taxi-data-engineering-pipeline
 ```
 
 Run snapshots:
