@@ -157,7 +157,7 @@ driver_df_trans = driver_obj.dedup(df_driver,['driver_id'],'last_updated_timesta
 
 # COMMAND ----------
 
-df_driver = driver_obj.process_timestamp(df_driver)
+df_driver = driver_obj.process_timestamp(driver_df_trans)
 
 # COMMAND ----------
 
