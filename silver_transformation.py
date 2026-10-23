@@ -242,7 +242,7 @@ display(df_paym)
 
 paym_obj = transformations()
 df_paym_trans = paym_obj.dedup(df_paym,['payment_id'],'last_updated_timestamp')
-df_paym = paym_obj.process_timestamp(df_paym)
+df_paym = paym_obj.process_timestamp(df_paym_trans)
 if spark.catalog.tableExists("Workspace.silver.payments"):
     
     paym_obj.upsert(
