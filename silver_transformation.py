@@ -278,7 +278,7 @@ display(df_vehicle)
 
 vehi_obj = transformations()
 df_vehicle_trans = vehi_obj.dedup(df_vehicle,['vehicle_id'],'last_updated_timestamp')
-df_vehicle = vehi_obj.process_timestamp(df_vehicle)
+df_vehicle = vehi_obj.process_timestamp(df_vehicle_trans)
 if spark.catalog.tableExists("Workspace.silver.vehicles"):
     
     vehi_obj.upsert(
